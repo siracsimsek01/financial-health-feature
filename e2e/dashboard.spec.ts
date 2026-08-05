@@ -134,6 +134,27 @@ test("desktop layout fits in one screen without scrolling", async ({
   expect(fits).toBe(true);
 });
 
+test("exports the currently selected month as a PDF", async ({ page }) => {
+  await page.locator("button", { hasText: "August 2025" }).click();
+  await expect(page.locator('[role="status"]')).toContainText(
+    "Viewing August 2025",
+  );
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Export PDF" }).click();
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe("ophelos-statement-2025-08.pdf");
+});
+
+test("exports the latest month by default", async ({ page }) => {
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Export PDF" }).click();
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe("ophelos-statement-2026-03.pdf");
+});
+
 test("mobile layout has no horizontal overflow", async ({ page }) => {
   const noSideScroll = await page.evaluate(
     () => document.documentElement.scrollWidth <= window.innerWidth,

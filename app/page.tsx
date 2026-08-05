@@ -23,15 +23,15 @@ export default function Home() {
     );
   }
 
-  const months: MonthView[] = byPeriod.map((statement) => ({
+  const months: MonthView[] = byPeriod.map((statement, index) => ({
     period: statement.period,
     longLabel: formatPeriod(statement.period),
     assessment: calculateFinancialHealth(statement),
     income: statement.income,
     expenditure: statement.expenditure,
+    // each month's trend against the previous available statement
+    trend: calculateFinancialTrend(byPeriod.slice(0, index + 1)),
   }));
-
-  const trend = calculateFinancialTrend(byPeriod);
 
   const history: HistoryPoint[] = months.map((month) => ({
     period: month.period,
@@ -44,7 +44,7 @@ export default function Home() {
 
   return (
     <main className="flex-1">
-      <Dashboard months={months} history={history} trend={trend} />
+      <Dashboard months={months} history={history} />
     </main>
   );
 }

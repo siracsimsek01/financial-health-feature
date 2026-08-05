@@ -1,18 +1,14 @@
+import {
+  assessmentExplanation,
+  statusLabels,
+} from "@/financial-health/copy";
 import type { FinancialHealthAssessment } from "@/financial-health/types";
-import { formatPounds } from "@/lib/currency";
 
 type Props = {
   assessment: FinancialHealthAssessment;
 };
 
 type Status = FinancialHealthAssessment["status"];
-
-const statusLabels: Record<Status, string> = {
-  surplus: "Money left over",
-  balanced: "Breaking even",
-  deficit: "Spending more than income",
-  "no-income": "No income recorded",
-};
 
 // Muted tints, paired with the label text so state never relies on colour alone.
 const statusChipClasses: Record<Status, string> = {
@@ -30,24 +26,6 @@ const statusDotClasses: Record<Status, string> = {
   "no-income": "bg-zinc-400",
 };
 
-function explanation(assessment: FinancialHealthAssessment): string {
-  const income = formatPounds(assessment.totalIncome);
-  const outgoings = formatPounds(assessment.totalExpenditure);
-
-  switch (assessment.status) {
-    case "surplus":
-      return `Your income of ${income} covers your regular outgoings of ${outgoings}, leaving ${formatPounds(assessment.remainingIncome)} this month.`;
-    case "balanced":
-      return `Your income of ${income} exactly matches your regular outgoings, so there is nothing left over this month.`;
-    case "deficit":
-      return `Your regular outgoings of ${outgoings} are ${formatPounds(Math.abs(assessment.remainingIncome))} more than your income of ${income} this month.`;
-    case "no-income":
-      return assessment.totalExpenditure > 0
-        ? `No income is recorded for this month, while your regular outgoings come to ${outgoings}.`
-        : "No income or outgoings are recorded for this month.";
-  }
-}
-
 export function AffordabilityAssessment({ assessment }: Props) {
   return (
     <div className="h-full rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:border-zinc-800 dark:bg-zinc-900">
@@ -61,7 +39,7 @@ export function AffordabilityAssessment({ assessment }: Props) {
         {statusLabels[assessment.status]}
       </span>
       <p className="mt-4 leading-relaxed text-zinc-800 dark:text-zinc-200">
-        {explanation(assessment)}
+        {assessmentExplanation(assessment)}
       </p>
       {assessment.expenditureRatio !== null ? (
         <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">

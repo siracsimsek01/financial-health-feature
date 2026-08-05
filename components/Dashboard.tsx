@@ -22,12 +22,13 @@ export type MonthView = {
   assessment: FinancialHealthAssessment;
   income: FinancialItem[];
   expenditure: FinancialItem[];
+  // this month compared with the previous available month
+  trend: FinancialTrend;
 };
 
 type Props = {
   months: MonthView[]; // sorted by period, oldest first
   history: HistoryPoint[];
-  trend: FinancialTrend;
 };
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -38,7 +39,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function Dashboard({ months, history, trend }: Props) {
+export function Dashboard({ months, history }: Props) {
   const [selectedPeriod, setSelectedPeriod] = useState<string | null>(null);
 
   const latest = months[months.length - 1];
@@ -46,6 +47,15 @@ export function Dashboard({ months, history, trend }: Props) {
     (selectedPeriod && months.find((m) => m.period === selectedPeriod)) ||
     latest;
   const viewingLatest = selected.period === latest.period;
+
+  const handleExport = async () => {
+    const [{ buildStatementExportData }, { exportStatementPdf }] =
+      await Promise.all([
+        import("@/lib/statementExport"),
+        import("@/lib/statementPdf"),
+      ]);
+    await exportStatementPdf(buildStatementExportData(selected));
+  };
 
   return (
     <div className="flex min-h-screen flex-col gap-4 px-4 py-4 sm:px-6 lg:h-screen lg:overflow-hidden">
@@ -69,24 +79,33 @@ export function Dashboard({ months, history, trend }: Props) {
             </p>
           </div>
         </div>
-        {!viewingLatest && (
-          <div
-            role="status"
-            className="flex items-center gap-3 rounded-full border border-violet-200 bg-violet-50 py-1.5 pl-4 pr-1.5 text-sm text-violet-900 dark:border-violet-900 dark:bg-violet-950/40 dark:text-violet-200"
-          >
-            <p>
-              Viewing{" "}
-              <span className="font-semibold">{selected.longLabel}</span>
-            </p>
-            <button
-              type="button"
-              onClick={() => setSelectedPeriod(null)}
-              className="cursor-pointer rounded-full bg-white px-3 py-1 font-medium text-violet-800 shadow-sm ring-1 ring-violet-200 transition-colors hover:bg-violet-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:bg-zinc-900 dark:text-violet-300 dark:ring-violet-900 dark:hover:bg-zinc-800"
+        <div className="flex flex-wrap items-center gap-3">
+          {!viewingLatest && (
+            <div
+              role="status"
+              className="flex items-center gap-3 rounded-full border border-violet-200 bg-violet-50 py-1.5 pl-4 pr-1.5 text-sm text-violet-900 dark:border-violet-900 dark:bg-violet-950/40 dark:text-violet-200"
             >
-              Back to latest
-            </button>
-          </div>
-        )}
+              <p>
+                Viewing{" "}
+                <span className="font-semibold">{selected.longLabel}</span>
+              </p>
+              <button
+                type="button"
+                onClick={() => setSelectedPeriod(null)}
+                className="cursor-pointer rounded-full bg-white px-3 py-1 font-medium text-violet-800 shadow-sm ring-1 ring-violet-200 transition-colors hover:bg-violet-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:bg-zinc-900 dark:text-violet-300 dark:ring-violet-900 dark:hover:bg-zinc-800"
+              >
+                Back to latest
+              </button>
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={handleExport}
+            className="cursor-pointer rounded-full bg-violet-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-violet-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:bg-violet-500 dark:text-violet-950 dark:hover:bg-violet-400"
+          >
+            Export PDF
+          </button>
+        </div>
       </header>
 
       <section aria-label="Selected month at a glance">
@@ -116,7 +135,7 @@ export function Dashboard({ months, history, trend }: Props) {
           <SectionLabel>Over time</SectionLabel>
           <FinancialHistoryChart
             history={history}
-            trend={trend}
+            trend={latest.trend}
             selectedPeriod={selected.period}
             onSelect={(period) =>
               setSelectedPeriod(period === latest.period ? null : period)

@@ -19,7 +19,7 @@ this already exists.
 I treat the provided expenditure as existing regular outgoings,
 including the example loan repayment.
 
-this means remaining income represents what is left after the
+This means remaining income represents what is left after the
 customer's recorded commitments.
 
 For a production version, I would confirm this assumption against
@@ -56,8 +56,8 @@ amount is still shown so any shortfall remains visible.
 
 Each statement represents one monthly snapshot.
 
-Trend compares the latest statement with the previous available
-statement using the change in remaining income.
+The trend for a selected month compares that statement with the
+previous available statement using the change in remaining income.
 
 I use the change in pounds rather than percentage change because
 percentages become confusing when the previous value is zero or
@@ -68,19 +68,16 @@ Statements are sorted by their `YYYY-MM` period before comparison.
 If a month is missing, I compare the latest two available statements
 rather than trying to infer missing data.
 
-Customers can select any available month from the history chart or
-month controls.
+Customers can select a month through the chart or month controls. The
+summary, affordability assessment, trend and breakdown then use the
+same selected statement.
 
-The selected month becomes the source for the summary, affordability
-assessment and detailed breakdown, while "Back to latest" returns the
-customer to their current position.
-
-I kept the selected month as the only meaningful UI state. Financial
-values continue to be derived from the same tested domain functions.
+The selected month is the only meaningful UI state. All financial
+results are still derived from the tested domain functions.
 
 ## Monetary representation
 
-For this take home, monetary values are represented as JavaScript
+For this take-home, monetary values are represented as JavaScript
 numbers in pounds.
 
 Calculations that affect financial states are normalised to pence
@@ -89,8 +86,7 @@ before comparison to avoid floating-point rounding problems.
 In production, I would follow the monetary representation already used
 by the wider Ophelos platform.
 
-
-## Customer communication 
+## Customer communication
 
 The UI uses clear and non-judgemental language.
 
@@ -103,11 +99,30 @@ advice.
 
 The design avoids relying on colour alone to communicate status.
 
-I also added a "How is this calculated?" explanation so customers can
-understand where the assessment comes from without adding complexity
-to the main view.
+A “How is this calculated?” disclosure explains the main calculation
+without adding unnecessary detail to the default view.
 
 ## Data and regulated context
+
+The take-home uses local mock data and does not send customer financial
+information to external services.
+
+The affordability assessment is deterministic and can be explained
+directly from the customer's recorded income and outgoings.
+
+The result is informational and is not presented as financial advice.
+
+In production, I would expect authentication, authorisation, secure
+storage, auditability and agreed data-retention policies to be handled
+by the wider platform.
+
+I would also want the customer-facing wording and any affordability
+rules reviewed with the relevant product and compliance teams before
+release.
+
+This take-home considers the regulated context, but it does not claim
+that the feature itself is FCA compliant.
+
 ## Testing strategy
 
 I focused tests on financial behaviour that could give the customer an
@@ -124,17 +139,21 @@ The domain tests cover:
 - unsorted statements
 - improving while still in deficit
 
-There are 17 domain tests in total.
-
 I kept these tests focused on behaviour rather than implementation
 details.
 
-I also manually exercised the interactive dashboard flow in different browsers,
-including mouse and keyboard month selection, historical states,
-returning to the latest statement, the calculation disclosure and
-keyboard focus behaviour.
+Playwright tests cover the main customer flows across desktop and
+mobile configurations, including:
 
- ## What I deliberately left out
+- selecting historical months
+- keeping the summary, assessment, trend and breakdown consistent
+- balanced and deficit states
+- returning to the latest month
+- keyboard interaction and visible keyboard focus
+- the affordability explanation
+- responsive layout
+
+## What I deliberately left out
 
 I did not build income or expenditure editing because the brief says
 that functionality already exists.
@@ -148,19 +167,22 @@ assessment is deterministic so it remains easy to test and explain.
 
 I also chose not to implement the stretch features such as secure
 statement sharing and PDF export. I prioritised completing and
-polishing the core customer experience first. 
+polishing the core customer experience first.
 
-## What I would do next 
+## What I would do next
+
 If I continued the feature, I would:
 
 1. Connect it to Ophelos' existing income and expenditure data.
-2. Validate the affordability wording with product and compliance.
-3. Add automated browser tests for the main interactive flows.
+2. Validate the affordability wording and rules with product and
+   compliance.
+3. Run the browser tests in CI and expand them as the feature evolves.
 4. Test the experience with real customers and accessibility tools.
-5. Consider secure sharing and PDF export once the core experience is
+5. Confirm production security, audit and retention requirements.
+6. Consider secure sharing and PDF export once the core experience is
    validated.
 
 ## Time spent
 
-Approximately 2 hours in total, including planning, implementation,
+Approximately 2.5 hours in total, including planning, implementation,
 testing, UI refinement and documentation.

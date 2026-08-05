@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { trendSentence } from "@/financial-health/copy";
 import type { FinancialTrend } from "@/financial-health/types";
 import { formatPounds } from "@/lib/currency";
 
@@ -28,19 +29,6 @@ type Props = {
   selectedPeriod: string;
   onSelect: (period: string) => void;
 };
-
-function trendSentence(trend: FinancialTrend): string {
-  switch (trend.direction) {
-    case "improving":
-      return `Your remaining income is ${formatPounds(trend.change)} higher than the previous month.`;
-    case "worsening":
-      return `Your remaining income is ${formatPounds(Math.abs(trend.change))} lower than the previous month.`;
-    case "unchanged":
-      return "Your remaining income is the same as the previous month.";
-    case "insufficient-data":
-      return "We need at least two months of information to show how things are changing.";
-  }
-}
 
 const trendGlyphs: Record<FinancialTrend["direction"], string> = {
   improving: "↗",

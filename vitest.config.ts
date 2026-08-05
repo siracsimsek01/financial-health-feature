@@ -4,6 +4,11 @@ import { defineConfig } from "vitest/config";
 // run under Playwright, which has an incompatible test runner API.
 export default defineConfig({
   test: {
-    include: ["financial-health/**/*.test.ts"],
+    include: ["financial-health/**/*.test.ts", "lib/**/*.test.ts"],
+  },
+  resolve: {
+    alias: {
+      "@": new URL(".", import.meta.url).pathname,
+    },
   },
 });

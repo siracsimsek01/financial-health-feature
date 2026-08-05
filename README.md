@@ -1,62 +1,59 @@
-# Ophelos Financial Health
+# Ophelos Financial Health Dashboard
 
-A small Next.js application that helps customers understand their
-current financial position and how it has changed over time.
+A Next.js and TypeScript application that helps customers understand their current financial position and how it changes over time.
+
+The feature turns existing income and expenditure data into an explainable affordability assessment, historical trend view, detailed monthly breakdown, and branded PDF export.
 
 ## What it does
 
-- calculates an explainable affordability assessment
-- shows income, regular outgoings and remaining income
-- tracks remaining income over time
-- allows customers to explore previous monthly statements
-- handles deficit, balanced and zero-income states
-- explains how the affordability result was calculated
+- Calculates total income, total expenditure, and remaining income
+- Provides an explainable affordability assessment
+- Handles surplus, balanced, deficit, and no-income states
+- Shows expenditure as a proportion of income
+- Tracks financial position across monthly statements
+- Allows customers to explore previous months
+- Updates the summary, assessment, trend, and breakdown together
+- Shows whether a selected month improved or worsened compared with the previous available month
+- Explains how the affordability result was calculated
+- Exports the selected monthly statement as a branded PDF
+- Supports keyboard navigation and responsive layouts
 
-## Tech
+## Product approach
+
+The application focuses on three customer questions:
+
+1. Where do I stand financially now?
+2. Why am I seeing this result?
+3. Is my position improving or getting worse over time?
+
+I deliberately avoided creating an arbitrary financial-health score.
+
+Instead, the dashboard shows the actual income, outgoings, remaining income, and expenditure ratio behind the result. This keeps the assessment deterministic, testable, and easy to explain.
+
+The language is factual and non-judgemental, and the result is presented as information rather than financial advice.
+
+More detail is available in [DECISIONS.md](./DECISIONS.md).
+
+## Tech stack
 
 - Next.js
-- TypeScript
 - React
+- TypeScript
 - Tailwind CSS
 - Recharts
+- jsPDF
 - Vitest
+- React Testing Library
+- Playwright
 
 ## Running locally
 
+### Requirements
+
+- Node.js 20 or later
+- pnpm
+
+### Install dependencies
+
+```bash
 pnpm install
-pnpm dev
-
-Open http://localhost:3000
-
-## Tests
-
-pnpm test
-
-The test suite focuses on financial behaviour and edge cases including
-zero income, deficits, floating-point precision and historical trend
-calculations.
-
-## Validation
-
-pnpm test
-pnpm tsc --noEmit
-pnpm build
-
-## Project structure
-
-financial-health/   Pure financial domain logic and tests
-components/         Presentation and interactive UI
-data/               Representative financial statements
-lib/                Display formatting utilities
-
-## Decisions
-
-See [DECISIONS.md](./DECISIONS.md) for product and engineering
-trade-offs.
-
-## AI usage
-
-Claude Code was used throughout the task for design review,
-implementation, testing and code review.
-
-The full prompt history is included with the submission.

@@ -113,8 +113,8 @@ directly from the customer's recorded income and outgoings.
 The result is informational and is not presented as financial advice.
 
 In production, I would expect authentication, authorisation, secure
-storage, auditability and agreed data-retention policies to be handled
-by the wider platform.
+storage, auditability and appropriate data-retention policies to be
+handled by the wider platform.
 
 I would also want the customer-facing wording and any affordability
 rules reviewed with the relevant product and compliance teams before
@@ -152,6 +152,7 @@ mobile configurations, including:
 - keyboard interaction and visible keyboard focus
 - the affordability explanation
 - responsive layout
+- PDF export for the selected statement
 
 ## What I deliberately left out
 
@@ -165,9 +166,14 @@ improve the core customer experience.
 I did not use AI to decide the customer's financial position. The
 assessment is deterministic so it remains easy to test and explain.
 
-I also chose not to implement the stretch features such as secure
-statement sharing and PDF export. I prioritised completing and
-polishing the core customer experience first.
+I did not add secure statement sharing because doing it properly would
+require token expiry, persistence and access-control decisions that are
+outside the scope of this frontend take-home.
+
+I did implement branded PDF export for the selected statement. It is
+generated in the browser using the same tested financial results shown
+on screen, so the mock customer data is not sent to an external
+service.
 
 ## What I would do next
 
@@ -179,8 +185,8 @@ If I continued the feature, I would:
 3. Run the browser tests in CI and expand them as the feature evolves.
 4. Test the experience with real customers and accessibility tools.
 5. Confirm production security, audit and retention requirements.
-6. Consider secure sharing and PDF export once the core experience is
-   validated.
+6. Implement secure, time-limited statement sharing once the required
+   authentication, persistence and access-control model is clear.
 
 ## Time spent
 

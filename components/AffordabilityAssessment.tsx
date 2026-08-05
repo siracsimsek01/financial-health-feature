@@ -50,7 +50,7 @@ function explanation(assessment: FinancialHealthAssessment): string {
 
 export function AffordabilityAssessment({ assessment }: Props) {
   return (
-    <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="h-full rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:border-zinc-800 dark:bg-zinc-900">
       <span
         className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${statusChipClasses[assessment.status]}`}
       >
@@ -60,7 +60,7 @@ export function AffordabilityAssessment({ assessment }: Props) {
         />
         {statusLabels[assessment.status]}
       </span>
-      <p className="mt-4 text-lg leading-relaxed text-zinc-800 dark:text-zinc-200">
+      <p className="mt-4 leading-relaxed text-zinc-800 dark:text-zinc-200">
         {explanation(assessment)}
       </p>
       {assessment.expenditureRatio !== null ? (
@@ -74,6 +74,20 @@ export function AffordabilityAssessment({ assessment }: Props) {
           because no income is recorded.
         </p>
       )}
+      <details className="group mt-4 border-t border-zinc-100 pt-4 dark:border-zinc-800">
+        <summary className="cursor-pointer list-none text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:text-zinc-400 dark:hover:text-zinc-200">
+          <span aria-hidden="true" className="mr-1.5 inline-block transition-transform group-open:rotate-90">
+            ›
+          </span>
+          How is this calculated?
+        </summary>
+        <p className="mt-2 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+          Remaining income is your recorded income minus your recorded regular
+          outgoings for the month. This assessment is based only on the
+          information provided here — it doesn&rsquo;t take into account
+          anything that isn&rsquo;t recorded.
+        </p>
+      </details>
     </div>
   );
 }

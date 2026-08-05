@@ -1,9 +1,10 @@
-"use client";
-
+// Rendered inside the Dashboard client component, so it is part of the
+// client bundle without needing its own "use client" entry point.
 import {
   Area,
   AreaChart,
   CartesianGrid,
+  ReferenceDot,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -24,6 +25,8 @@ export type HistoryPoint = {
 type Props = {
   history: HistoryPoint[];
   trend: FinancialTrend;
+  selectedPeriod: string;
+  onSelect: (period: string) => void;
 };
 
 function trendSentence(trend: FinancialTrend): string {
@@ -78,13 +81,23 @@ function HistoryTooltip({
           <dd className="tabular-nums">{formatPounds(point.remainingIncome)}</dd>
         </div>
       </dl>
+      <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">
+        Click to view this month
+      </p>
     </div>
   );
 }
 
-export function FinancialHistoryChart({ history, trend }: Props) {
+export function FinancialHistoryChart({
+  history,
+  trend,
+  selectedPeriod,
+  onSelect,
+}: Props) {
+  const selectedPoint = history.find((p) => p.period === selectedPeriod);
+
   return (
-    <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] sm:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="flex h-full flex-col rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:border-zinc-800 dark:bg-zinc-900">
       <p className="text-zinc-800 dark:text-zinc-200">
         {trendGlyphs[trend.direction] && (
           <span
@@ -97,15 +110,22 @@ export function FinancialHistoryChart({ history, trend }: Props) {
         {trendSentence(trend)}
       </p>
       <div
-        className="mt-6 h-64"
+        className="mt-4 h-56 min-h-0 cursor-pointer lg:h-auto lg:flex-1"
         role="img"
-        aria-label="Area chart of remaining income by month"
+        aria-label="Area chart of remaining income by month. Selecting a point shows that month's details."
       >
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             accessibilityLayer
             data={history}
             margin={{ top: 8, right: 8, bottom: 0, left: 8 }}
+            onClick={(state) => {
+              const index = Number(state?.activeIndex);
+              const point = Number.isInteger(index) ? history[index] : undefined;
+              if (point) {
+                onSelect(point.period);
+              }
+            }}
           >
             <defs>
               <linearGradient id="remainingFill" x1="0" y1="0" x2="0" y2="1">
@@ -134,18 +154,56 @@ export function FinancialHistoryChart({ history, trend }: Props) {
               tickFormatter={(value: number) => formatPounds(value)}
               width={70}
             />
-            <Tooltip content={<HistoryTooltip />} cursor={{ stroke: "#8b5cf6", strokeOpacity: 0.25 }} />
+            <Tooltip
+              content={<HistoryTooltip />}
+              cursor={{ stroke: "#8b5cf6", strokeOpacity: 0.25 }}
+            />
             <Area
               type="monotone"
               dataKey="remainingIncome"
               stroke="#8b5cf6"
               strokeWidth={2}
               fill="url(#remainingFill)"
-              dot={{ r: 3, fill: "#8b5cf6", strokeWidth: 0 }}
-              activeDot={{ r: 5 }}
+              dot={{ r: 3, fill: "#8b5cf6", strokeWidth: 0, cursor: "pointer" }}
+              activeDot={{ r: 5, cursor: "pointer" }}
             />
+            {selectedPoint && (
+              <ReferenceDot
+                x={selectedPoint.label}
+                y={selectedPoint.remainingIncome}
+                r={6}
+                fill="#8b5cf6"
+                stroke="#fff"
+                strokeWidth={2}
+              />
+            )}
           </AreaChart>
         </ResponsiveContainer>
+      </div>
+      <div
+        className="mt-4 flex flex-wrap gap-2"
+        role="group"
+        aria-label="Choose a month to view"
+      >
+        {history.map((point) => {
+          const isSelected = point.period === selectedPeriod;
+          return (
+            <button
+              key={point.period}
+              type="button"
+              aria-pressed={isSelected}
+              onClick={() => onSelect(point.period)}
+              className={`cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 ${
+                isSelected
+                  ? "bg-violet-600 text-white dark:bg-violet-500 dark:text-violet-950"
+                  : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+              }`}
+            >
+              <span aria-hidden="true">{point.label}</span>
+              <span className="sr-only">{point.longLabel}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

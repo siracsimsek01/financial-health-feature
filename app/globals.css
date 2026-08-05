@@ -24,3 +24,22 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
+
+/* Recharts' accessibilityLayer makes the chart surface focusable, and its
+   internal <g> layers carry tabindex="-1", so a click on the curve or a dot
+   focuses that layer and draws the browser's default ring around it. Hide
+   the ring everywhere inside the chart; keyboard focus (which always lands
+   on the svg surface) keeps a visible ring. */
+.recharts-wrapper :focus,
+.recharts-wrapper:focus {
+  outline: none;
+}
+.recharts-wrapper svg.recharts-surface:focus-visible {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+}
+
+/* Glide the selected-month marker between points instead of jumping. */
+.recharts-reference-dot circle {
+  transition: cx 300ms ease, cy 300ms ease;
+}

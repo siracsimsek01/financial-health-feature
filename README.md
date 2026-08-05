@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ophelos Financial Health
 
-## Getting Started
+A small Next.js application that helps customers understand their
+current financial position and how it has changed over time.
 
-First, run the development server:
+## What it does
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
+- calculates an explainable affordability assessment
+- shows income, regular outgoings and remaining income
+- tracks remaining income over time
+- allows customers to explore previous monthly statements
+- handles deficit, balanced and zero-income states
+- explains how the affordability result was calculated
+
+## Tech
+
+- Next.js
+- TypeScript
+- React
+- Tailwind CSS
+- Recharts
+- Vitest
+
+## Running locally
+
+pnpm install
 pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tests
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+pnpm test
 
-## Learn More
+The test suite focuses on financial behaviour and edge cases including
+zero income, deficits, floating-point precision and historical trend
+calculations.
 
-To learn more about Next.js, take a look at the following resources:
+## Validation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+pnpm test
+pnpm tsc --noEmit
+pnpm build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project structure
 
-## Deploy on Vercel
+financial-health/   Pure financial domain logic and tests
+components/         Presentation and interactive UI
+data/               Representative financial statements
+lib/                Display formatting utilities
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Decisions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See [DECISIONS.md](./DECISIONS.md) for product and engineering
+trade-offs.
+
+## AI usage
+
+Claude Code was used throughout the task for design review,
+implementation, testing and code review.
+
+The full prompt history is included with the submission.
